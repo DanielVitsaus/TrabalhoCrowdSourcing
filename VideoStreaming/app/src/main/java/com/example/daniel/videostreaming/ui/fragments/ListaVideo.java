@@ -26,7 +26,7 @@ public class ListaVideo extends Fragment {
     public ListaVideo() {
         videos = new ArrayList<>();
         for (int i = 0; i < 10; i++){
-            Videos v = new Videos("URURURURURUR", "Semiraio em Computação VI");
+            Videos v = new Videos("URURURURURUR", "Semirario em Computação VI");
             videos.add(v);
         }
     }

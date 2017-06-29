@@ -5,16 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.daniel.videostreaming.R;
 import com.example.daniel.videostreaming.models.Videos;
 
 import java.util.List;
 
-/**
- * Created by daniel on 28/06/17.
- */
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
@@ -26,7 +22,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Toast.makeText(parent.getContext(), viewType, Toast.LENGTH_SHORT);
+
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_lista_video, parent,false);
         return new ViewHolder(view);
     }
@@ -35,17 +31,23 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         holder.nome_Video.setText(myVideos.get(position).getNome_Video());
+
+        holder.view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return myVideos.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder{
 
         public  final View view;
-        public String url_video;
         public TextView nome_Video;
 
         public ViewHolder(View itemView) {
