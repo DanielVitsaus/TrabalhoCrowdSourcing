@@ -47,7 +47,7 @@ public class ListaVideo extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_lista_video, container, false);
 
-        myAdapter = new RecyclerViewAdapter(videos);
+        myAdapter = new RecyclerViewAdapter(videos, this.getContext());
 
         recyclerView =  (RecyclerView) view.findViewById(R.id.lista_video);
         recyclerView.setAdapter(myAdapter);

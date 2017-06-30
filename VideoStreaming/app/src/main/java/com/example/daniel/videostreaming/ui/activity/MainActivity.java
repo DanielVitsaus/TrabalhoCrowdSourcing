@@ -94,16 +94,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer != null) {
-            //drawer.closeDrawer(GravityCompat.START);
             drawer.closeDrawers();
         }
         return true;
     }
 
     private void commitReplace(Fragment fragment){
-        //Toast.makeText(MainActivity.this, "Fragment substituido", Toast.LENGTH_SHORT).show();
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out).replace(R.id.fragment_layout, fragment).commit();
-
     }
 }
