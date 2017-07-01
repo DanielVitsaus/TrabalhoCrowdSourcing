@@ -10,6 +10,7 @@ import android.view.Surface;
 import android.view.View;
 
 import com.example.daniel.videostreaming.R;
+import com.example.daniel.videostreaming.utils.EventLogger;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -20,8 +21,6 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioRendererEventListener;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.source.dash.DashChunkSource;
@@ -54,6 +53,10 @@ public class ExoPlayer extends AppCompatActivity {
     //para a qualidade de esperiencia do usuario
     private ComponentListener componentListener;
 
+    private EventLogger eventLogger;
+    private DefaultTrackSelector trackSelector;
+    //private TrackSelectionHelper trackSelectionHelper;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +65,8 @@ public class ExoPlayer extends AppCompatActivity {
         componentListener = new ComponentListener();
 
         playerView = (SimpleExoPlayerView) findViewById(R.id.video_view);
+
+
 
     }
 
@@ -120,6 +125,8 @@ public class ExoPlayer extends AppCompatActivity {
             player.setAudioDebugListener(null);
             player.release();
             player = null;
+            eventLogger = null;
+            trackSelector = null;
         }
     }
 
@@ -128,15 +135,27 @@ public class ExoPlayer extends AppCompatActivity {
         // a factory to create an AdaptiveVideoTrackSelection
         TrackSelection.Factory adaptiveTrackSelectionFactory = new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
 
+        trackSelector = new DefaultTrackSelector(adaptiveTrackSelectionFactory);
+        //trackSelectionHelper = new TrackSelectionHelper(trackSelector, adaptiveTrackSelectionFactory);
+
+        eventLogger = new EventLogger(trackSelector);
+
 
         player = ExoPlayerFactory.newSimpleInstance(
                 new DefaultRenderersFactory(this),
                 new DefaultTrackSelector(adaptiveTrackSelectionFactory),
                 new DefaultLoadControl());
 
+        player.addListener(eventLogger);
+        player.setAudioDebugListener(eventLogger);
+        player.setVideoDebugListener(eventLogger);
+        player.setMetadataOutput(eventLogger);
+
+        /*
         player.addListener(componentListener);
         player.setVideoDebugListener(componentListener);
         player.setAudioDebugListener(componentListener);
+        */
 
         playerView.setPlayer(player);
 
@@ -146,7 +165,7 @@ public class ExoPlayer extends AppCompatActivity {
 
         Uri uri = Uri.parse(getString(R.string.media_url_dash));
         MediaSource mediaSource = buildMediaSource(uri);
-        player.prepare(mediaSource, true, false);
+        player.prepare(mediaSource, true, true);
 
     }
 
@@ -171,6 +190,8 @@ public class ExoPlayer extends AppCompatActivity {
 
         @Override
         public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+
+            Log.d("TESTE", "Qualidade -> " + trackSelections.get(0).getSelectedFormat().toString());
 
         }
 
@@ -202,6 +223,7 @@ public class ExoPlayer extends AppCompatActivity {
             }
             Log.d("TESTE", "changed state to " + stateString
                     + " playWhenReady: " + playWhenReady);
+            Log.d("TESTE", "BANDWIDTH_METER -> " + BANDWIDTH_METER.toString());
 
         }
 
