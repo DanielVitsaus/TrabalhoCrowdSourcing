@@ -10,7 +10,7 @@
         android:id="@+id/lista_video"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorAccent"
+        android:background="#FEFEFE"
         tools:listitem="@layout/item_lista_video">
 
     </android.support.v7.widget.RecyclerView>
