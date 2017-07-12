@@ -105,6 +105,7 @@ public class ExoPlayer extends AppCompatActivity implements com.google.android.e
         debugTextView = (TextView) findViewById(R.id.debug_text_view);
         playerView = (SimpleExoPlayerView) findViewById(R.id.video_view);
 
+        Log.d("EventLogger", "BAND -> " + BANDWIDTH_METER.DEFAULT_MAX_WEIGHT);
     }
 
     @Override
