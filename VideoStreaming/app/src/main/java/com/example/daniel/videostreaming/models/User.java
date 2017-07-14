@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.example.daniel.videostreaming.utils.LibraryClass;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 

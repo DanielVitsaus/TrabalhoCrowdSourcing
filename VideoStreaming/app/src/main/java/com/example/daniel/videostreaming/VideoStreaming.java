@@ -13,14 +13,18 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
+import com.example.daniel.videostreaming.utils.http.OkHttpRequest;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
@@ -38,7 +42,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.SphericalUtil;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class VideoStreaming extends MultiDexApplication implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -203,6 +212,7 @@ public class VideoStreaming extends MultiDexApplication implements GoogleApiClie
     }
 
 
+
     @Override
     public void onLocationChanged(Location location) {
 
@@ -224,18 +234,37 @@ public class VideoStreaming extends MultiDexApplication implements GoogleApiClie
         }
 
         @SuppressLint({"NewApi", "LocalSuppress"})
+        String frequency = wifiInfo.getFrequency() + WifiInfo.FREQUENCY_UNITS;
+        String linkSpeed = wifiInfo.getLinkSpeed() + WifiInfo.LINK_SPEED_UNITS;
+
         String strWifiInfo = "SSID: " + wifiInfo.getSSID() + "\n" +
                              "BSSID: " + wifiInfo.getBSSID() + "\n" +
                              "IP Address: " + ipString + "\n" +
                              "MAC Address: " + wifiInfo.getMacAddress() + "\n" +
-                             "Frequency: " + wifiInfo.getFrequency() + WifiInfo.FREQUENCY_UNITS + "\n" +
-                             "LinkSpeed: " + wifiInfo.getLinkSpeed() + WifiInfo.LINK_SPEED_UNITS + "\n" +
+                             "Frequency: " + frequency + "\n" +
+                             "LinkSpeed: " + linkSpeed + "\n" +
                              "Rssi: " + wifiInfo.getRssi() + "dBm" + "\n" +
-                             "Rssi Level: " +
-                             WifiManager.calculateSignalLevel(wifiInfo.getRssi(), RSSILevels) +
+                             "Rssi Level: " + WifiManager.calculateSignalLevel(wifiInfo.getRssi(), RSSILevels) +
                              " of " + RSSILevels;
 
         Log.d("WIFI", strWifiInfo);
+
+        Map<String, String> params = new HashMap<String, String>();
+
+        params.put("latitude", String.valueOf(latitude) );
+        params.put("longetude", String.valueOf(longetude) );
+        params.put("ssid", wifiInfo.getSSID());
+        params.put("bssid", wifiInfo.getBSSID());
+        params.put("ipAddress", ipString);
+        params.put("macAddress", wifiInfo.getMacAddress());
+        params.put("frequency", frequency);
+        params.put("linkSpeed", linkSpeed);
+        params.put("rssi", String.valueOf(wifiInfo.getRssi()) );
+        params.put("rssiLevel", String.valueOf(WifiManager.calculateSignalLevel(wifiInfo.getRssi(), RSSILevels)) );
+
+        JSONObject parameter = new JSONObject(params);
+
+        //new EnviaInfo().execute(params.toString());
 
     }
 
@@ -248,6 +277,29 @@ public class VideoStreaming extends MultiDexApplication implements GoogleApiClie
                 wifis[i] = ((wifiScanList.get(i)).toString());
             }
 
+        }
+    }
+
+    private class EnviaInfo extends AsyncTask<String, String, String>{
+
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+            String reposta = null;
+            OkHttpRequest okHttp = new OkHttpRequest();
+
+            try {
+                reposta = okHttp.post(strings[0]);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return reposta;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
         }
     }
 

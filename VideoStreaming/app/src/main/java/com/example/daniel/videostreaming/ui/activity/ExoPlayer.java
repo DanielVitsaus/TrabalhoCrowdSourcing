@@ -17,7 +17,6 @@ import com.example.daniel.videostreaming.R;
 import com.example.daniel.videostreaming.VideoStreaming;
 import com.example.daniel.videostreaming.utils.EventLogger;
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;

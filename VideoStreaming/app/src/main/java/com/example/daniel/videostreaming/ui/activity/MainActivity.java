@@ -1,6 +1,5 @@
 package com.example.daniel.videostreaming.ui.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -10,12 +9,17 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.daniel.videostreaming.R;
 import com.example.daniel.videostreaming.ui.fragments.HeatMap;
 import com.example.daniel.videostreaming.ui.fragments.ListaVideo;
+
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -27,6 +31,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("msisdn", "123123");
+        params.put("name", "your name");
+        JSONObject parameter = new JSONObject(params);
+
+        Log.d("JSON", parameter.toString());
 
         commitReplace(ListaVideo.newInstance());
 
