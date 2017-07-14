@@ -32,13 +32,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("msisdn", "123123");
-        params.put("name", "your name");
-        JSONObject parameter = new JSONObject(params);
-
-        Log.d("JSON", parameter.toString());
-
         commitReplace(ListaVideo.newInstance());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

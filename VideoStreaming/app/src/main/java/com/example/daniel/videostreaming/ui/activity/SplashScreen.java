@@ -8,8 +8,20 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
+import android.util.Log;
+import android.widget.LinearLayout;
 
 import com.example.daniel.videostreaming.R;
+import com.example.daniel.videostreaming.VideoStreaming;
+import com.example.daniel.videostreaming.models.Videos;
+import com.example.daniel.videostreaming.utils.http.OkHttpRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 
 
 public class SplashScreen extends Activity{
@@ -17,34 +29,23 @@ public class SplashScreen extends Activity{
 
     private static final String IDUSER = "IDUSER";
 
+    private Videos videos ;
+    private LinearLayout linearLayout;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        //requestWindowFeature(Window.FEATURE_NO_TITLE);
-
         super.onCreate(savedInstanceState);
 
-        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        linearLayout = (LinearLayout) findViewById(R.id.linear);
 
         setContentView(R.layout.activity_splash_screen);
 
-        delay(950);
+        videos = VideoStreaming.getVideos();
 
-        /*
-        if (!isConnectingToInternet()){
-            Intent i = new Intent(SplashScreen.this, MainActivity.class);
-            startActivity(i);
-
-            finish();
-        }else  if (id.isEmpty()){
-            delay(900);
-        }
-        else {
-            coletaDado(id);
-        }
-        */
+        new ColetaDados().execute("http://mconfdev.ufjf.br/aplicativo/index.php?key=app&req=1");
 
     }
 
@@ -60,20 +61,9 @@ public class SplashScreen extends Activity{
     }
 
 
-
-    private void delay(int time){
-
-        new Handler().postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                Intent i = new Intent(SplashScreen.this, MainActivity.class);
-                startActivity(i);
-
-                finish();
-            }
-        }, time);
-
+    private void novaActivity(){
+        Intent i = new Intent(SplashScreen.this, MainActivity.class);
+        startActivity(i);
     }
 
     public boolean isConnectingToInternet(){
@@ -84,19 +74,41 @@ public class SplashScreen extends Activity{
 
 
 
-    public class ColetaDados extends AsyncTask<String, Void, Void> {
+    public class ColetaDados extends AsyncTask<String, String, String> {
 
-        @Override
-        protected Void doInBackground(String... strings) {
+       @Override
+        protected String doInBackground(String... params) {
+           String reposta = "";
+           OkHttpRequest okHttpRequest = new OkHttpRequest();
 
-            delay(200);
-            return null;
+           try {
+               reposta = okHttpRequest.get(params[0]);
+           } catch (IOException e) {
+               e.printStackTrace();
+           }
+            Log.d("GET", reposta);
+           return reposta;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            finish();
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            try {
+                JSONObject jsonObject = new JSONObject(s);
+                if (jsonObject.getString("code").compareTo("200") == 0) {
+                    videos.setNome_Video(jsonObject.getString("nome"));
+                    videos.setUrl_video(jsonObject.getString("mpd"));
+                }
+                else{
+                    Snackbar snackbar = Snackbar.make(linearLayout, "Erro ao buscar a lista de videos", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            novaActivity();
         }
     }
 }

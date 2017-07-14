@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.daniel.videostreaming.R;
+import com.example.daniel.videostreaming.VideoStreaming;
 import com.example.daniel.videostreaming.models.Videos;
 import com.example.daniel.videostreaming.ui.adapters.RecyclerViewAdapter;
 
@@ -23,12 +24,16 @@ public class ListaVideo extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerViewAdapter myAdapter;
 
+
     public ListaVideo() {
         videos = new ArrayList<>();
+        videos.add(VideoStreaming.getVideos());
+        /*
         for (int i = 0; i < 10; i++){
             Videos v = new Videos("URURURURURUR", "Semirario em Computação VI");
-            videos.add(v);
+
         }
+        */
     }
 
 

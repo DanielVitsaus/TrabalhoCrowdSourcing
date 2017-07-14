@@ -16,6 +16,7 @@ import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -24,6 +25,7 @@ import android.support.multidex.MultiDexApplication;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
+import com.example.daniel.videostreaming.models.Videos;
 import com.example.daniel.videostreaming.utils.http.OkHttpRequest;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
@@ -55,7 +57,7 @@ public class VideoStreaming extends MultiDexApplication implements GoogleApiClie
     protected String userAgent;
 
     private GoogleApiClient mGoogleApiClient;
-    private final int MY_LOCATION_REQUEST_CODE = 1;
+    private final String URL = "http://mconfdev.ufjf.br/aplicativo";
 
     private  double distancia;
     private double latitude;
@@ -73,6 +75,8 @@ public class VideoStreaming extends MultiDexApplication implements GoogleApiClie
     private int ipAddress;
     private String ipString;
     private int RSSILevels = 256;
+
+    private static Videos videos;
 
 
     @SuppressLint("DefaultLocale")
@@ -265,7 +269,16 @@ public class VideoStreaming extends MultiDexApplication implements GoogleApiClie
         JSONObject parameter = new JSONObject(params);
 
         //new EnviaInfo().execute(params.toString());
+        Log.d("JSON", parameter.toString());
 
+    }
+
+    public static Videos getVideos(){
+        if (videos == null){
+            videos = new Videos();
+        }
+
+        return ( videos );
     }
 
     private class WifiScanReceiver extends BroadcastReceiver {
@@ -290,7 +303,7 @@ public class VideoStreaming extends MultiDexApplication implements GoogleApiClie
             OkHttpRequest okHttp = new OkHttpRequest();
 
             try {
-                reposta = okHttp.post(strings[0]);
+                reposta = okHttp.post(strings[0], URL);
             } catch (IOException e) {
                 e.printStackTrace();
             }

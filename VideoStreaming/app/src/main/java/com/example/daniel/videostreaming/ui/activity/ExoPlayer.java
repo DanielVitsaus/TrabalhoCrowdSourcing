@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.daniel.videostreaming.R;
 import com.example.daniel.videostreaming.VideoStreaming;
+import com.example.daniel.videostreaming.models.Videos;
 import com.example.daniel.videostreaming.utils.EventLogger;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -62,6 +63,8 @@ public class ExoPlayer extends AppCompatActivity implements com.google.android.e
     public static final String PREFER_EXTENSION_DECODERS = "prefer_extension_decoders";
     private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
 
+    private Videos videos;
+
     private SimpleExoPlayerView playerView;
     private SimpleExoPlayer player;
 
@@ -91,6 +94,8 @@ public class ExoPlayer extends AppCompatActivity implements com.google.android.e
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exoplayer);
+
+        videos =  VideoStreaming.getVideos();
 
         view = this.getCurrentFocus();
         clearResumePosition();
@@ -229,7 +234,9 @@ public class ExoPlayer extends AppCompatActivity implements com.google.android.e
                 player.seekTo(currentWindow, playbackPosition);
             }
 
-            Uri uri = Uri.parse(getString(R.string.media_url_dash));
+            //Uri uri = Uri.parse(getString(R.string.media_url_dash));
+            Uri uri = Uri.parse(videos.getUrl_video());
+
             MediaSource mediaSource = buildMediaSource(uri);
 
             player.prepare(mediaSource, !haveResumePosition, true);

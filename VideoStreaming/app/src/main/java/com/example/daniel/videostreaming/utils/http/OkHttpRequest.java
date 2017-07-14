@@ -11,16 +11,14 @@ import okhttp3.Response;
 
 public class OkHttpRequest {
 
-    static String URL = "http://mconfdev.ufjf.br/aplicativo/index.php?";
-    static String URLPos = "http://mconfdev.ufjf.br/aplicativo/index.php";
 
-    public String post(String json) throws IOException {
+    public String post(String json, String url) throws IOException {
 
         OkHttpClient client = new OkHttpClient();
 
         Request.Builder builder = new Request.Builder();
 
-        builder.url(URLPos);
+        builder.url(url);
 
         MediaType mediaType =
                 MediaType.parse("application/json; charset=utf-8");
@@ -38,12 +36,12 @@ public class OkHttpRequest {
 
     }
 
-    public String get() throws IOException {
+    public String get(String url) throws IOException {
 
 
         OkHttpClient client = new OkHttpClient();
 
-        Request request = new Request.Builder().url(URL).build();
+        Request request = new Request.Builder().url(url).build();
 
         Response response = client.newCall(request).execute();
 
