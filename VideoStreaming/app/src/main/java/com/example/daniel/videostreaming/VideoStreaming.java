@@ -44,6 +44,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.SphericalUtil;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -57,7 +58,7 @@ public class VideoStreaming extends MultiDexApplication implements GoogleApiClie
     protected String userAgent;
 
     private GoogleApiClient mGoogleApiClient;
-    private final String URL = "http://mconfdev.ufjf.br/aplicativo";
+    private final String URL = "http://mconfdev.ufjf.br/aplicativo/index.php?req=3&key=app";
 
     private  double distancia;
     private double latitude;
@@ -78,6 +79,8 @@ public class VideoStreaming extends MultiDexApplication implements GoogleApiClie
 
     private static Videos videos;
 
+
+    private String teste = null;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -162,8 +165,8 @@ public class VideoStreaming extends MultiDexApplication implements GoogleApiClie
     public void startLocationUpdates() {
 
         locationRequest = new LocationRequest();
-        locationRequest.setInterval(10000);
-        locationRequest.setFastestInterval(5000);
+        locationRequest.setInterval(100000);
+        locationRequest.setFastestInterval(50000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -230,16 +233,16 @@ public class VideoStreaming extends MultiDexApplication implements GoogleApiClie
         }
 
         if (map != null){
-            LatLng sydney = new LatLng(latitude, longetude);
+            LatLng sydney = new LatLng(-37.1886, 145.708);
             map.clear();
             map.addMarker(new MarkerOptions().position(sydney).title("Casa do Daniel"));
-            map.moveCamera(CameraUpdateFactory.zoomTo(20));
+            map.moveCamera(CameraUpdateFactory.zoomTo(8));
             map.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         }
 
         @SuppressLint({"NewApi", "LocalSuppress"})
-        String frequency = wifiInfo.getFrequency() + WifiInfo.FREQUENCY_UNITS;
-        String linkSpeed = wifiInfo.getLinkSpeed() + WifiInfo.LINK_SPEED_UNITS;
+        String frequency = String.valueOf(wifiInfo.getFrequency());//+ WifiInfo.FREQUENCY_UNITS;
+        String linkSpeed = String.valueOf(wifiInfo.getLinkSpeed());//+ WifiInfo.LINK_SPEED_UNITS;
 
         String strWifiInfo = "SSID: " + wifiInfo.getSSID() + "\n" +
                              "BSSID: " + wifiInfo.getBSSID() + "\n" +
@@ -253,23 +256,48 @@ public class VideoStreaming extends MultiDexApplication implements GoogleApiClie
 
         Log.d("WIFI", strWifiInfo);
 
+        /*
         Map<String, String> params = new HashMap<String, String>();
 
-        params.put("latitude", String.valueOf(latitude) );
-        params.put("longetude", String.valueOf(longetude) );
-        params.put("ssid", wifiInfo.getSSID());
-        params.put("bssid", wifiInfo.getBSSID());
-        params.put("ipAddress", ipString);
-        params.put("macAddress", wifiInfo.getMacAddress());
-        params.put("frequency", frequency);
-        params.put("linkSpeed", linkSpeed);
-        params.put("rssi", String.valueOf(wifiInfo.getRssi()) );
-        params.put("rssiLevel", String.valueOf(WifiManager.calculateSignalLevel(wifiInfo.getRssi(), RSSILevels)) );
+        JSONObject parameter = new JSONObject();
 
-        JSONObject parameter = new JSONObject(params);
+        try {
+            parameter.put("key", "app" );
+            parameter.put("latitude", String.valueOf(latitude) );
+            parameter.put("longetude", String.valueOf(longetude) );
+            parameter.put("ssid", wifiInfo.getSSID());
+            parameter.put("bssid", wifiInfo.getBSSID());
+            parameter.put("ipAddress", ipString);
+            parameter.put("macAddress", wifiInfo.getMacAddress());
+            parameter.put("frequency", frequency);
+            parameter.put("linkSpeed", linkSpeed);
+            parameter.put("rssi", String.valueOf(wifiInfo.getRssi()) );
+            parameter.put("rssiLevel", String.valueOf(WifiManager.calculateSignalLevel(wifiInfo.getRssi(), RSSILevels)) );
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-        //new EnviaInfo().execute(params.toString());
-        Log.d("JSON", parameter.toString());
+        */
+
+        String info =  URL + "&"
+                + "latitude="+String.valueOf(latitude)
+                + "&" + "longetude=" + String.valueOf(longetude)
+                + "&" + "ssid="+wifiInfo.getSSID().replace('"',' ').replace(" ", "")
+                + "&" + "bssid=" + wifiInfo.getBSSID()
+                + "&" + "ipAddress=" + ipString
+                + "&" + "macAddress=" + wifiInfo.getMacAddress()
+                + "&" + "frequency=" + frequency
+                + "&" + "linkSpeed=" + linkSpeed
+                + "&" + "rssi=" + String.valueOf(wifiInfo.getRssi())
+                + "&" + "rssiLevel=" + String.valueOf(WifiManager.calculateSignalLevel(wifiInfo.getRssi(), RSSILevels));
+
+
+
+        //JSONObject parameter = new JSONObject(params);
+
+        new EnviaInfo().execute(info);
+        //Log.d("JSON", parameter.toString());
+        Log.d("JSON", "Teste -> " + info);
 
     }
 
@@ -302,8 +330,11 @@ public class VideoStreaming extends MultiDexApplication implements GoogleApiClie
             String reposta = null;
             OkHttpRequest okHttp = new OkHttpRequest();
 
+            Log.d("JSON", "TES_DO_ -> " + strings[0]);
+
             try {
-                reposta = okHttp.post(strings[0], URL);
+                reposta = okHttp.get(strings[0]);
+                teste = reposta;
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -37,8 +37,8 @@ dependencies {
     compile 'com.google.android.exoplayer:exoplayer:r2.4.0'
     compile 'com.google.android.gms:play-services-maps:11.0.2'
     compile 'com.android.support:multidex:1.0.1'
-    testCompile 'junit:junit:4.12'
     compile 'com.google.maps.android:android-maps-utils:0.5'
     compile 'com.google.android.gms:play-services:11.0.2'
     compile 'com.squareup.okhttp3:okhttp:3.8.1'
+    testCompile 'junit:junit:4.12'
 }

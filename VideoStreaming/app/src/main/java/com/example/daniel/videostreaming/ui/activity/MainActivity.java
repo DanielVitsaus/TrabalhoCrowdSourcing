@@ -1,5 +1,6 @@
 package com.example.daniel.videostreaming.ui.activity;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -15,16 +16,18 @@ import android.view.MenuItem;
 import com.example.daniel.videostreaming.R;
 import com.example.daniel.videostreaming.ui.fragments.HeatMap;
 import com.example.daniel.videostreaming.ui.fragments.ListaVideo;
+import com.example.daniel.videostreaming.utils.http.OkHttpRequest;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 
-    private String tag;
+    private String l = null;
 
 
     @Override
@@ -45,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        new ColetaDados().execute("http://mconfdev.ufjf.br/aplicativo/index.php?req=2&key=app");
     }
 
     @Override
@@ -92,7 +97,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.nav_video) {
            fragment = ListaVideo.newInstance();
         } else if (id == R.id.nav_color_map) {
-            fragment = HeatMap.newInstance();
+            if (l != null) {
+                fragment = HeatMap.newInstance(l);
+            }
         }
 
         if (fragment != null) {
@@ -112,5 +119,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out).replace(R.id.fragment_layout, fragment).commit();
+    }
+
+    public class ColetaDados extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params) {
+            OkHttpRequest okHttpRequest = new OkHttpRequest();
+            try {
+                l = okHttpRequest.get(params[0]);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
     }
 }
