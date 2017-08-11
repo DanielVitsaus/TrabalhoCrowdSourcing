@@ -62,6 +62,8 @@ public class SplashScreen extends Activity{
 
 
     private void novaActivity(){
+
+        finish();
         Intent i = new Intent(SplashScreen.this, MainActivity.class);
         startActivity(i);
     }
